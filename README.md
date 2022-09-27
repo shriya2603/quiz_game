@@ -11,7 +11,6 @@ Few Assumptions:
 - "encoding/csv" : For reading CSV file 
 - "flag" : For getting the flags data. Here we are using 2 flags : csvFile and limit . So user can provide their csv file and run the program with their desired time limit by using limit flag (in seconds )
 - "strings" : For removing spaces and new line from user response
-- "bufio" : For buffered I/O
 
 ## Steps to run the quiz game 
 Step 1: To build the program 

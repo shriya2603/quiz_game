@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"encoding/csv"
 	"flag"
 	"fmt"
@@ -27,7 +26,7 @@ func parseLines(lines [][]string) []Problem {
 }
 
 func printResults(points int, totalPoints int) {
-	fmt.Printf("You scored %d out of %d.", points, totalPoints)
+	fmt.Printf("\nYou scored %d out of %d.", points, totalPoints)
 	fmt.Println("Thankyou!!")
 }
 
@@ -38,7 +37,7 @@ func exit(msg string) {
 
 func main() {
 	csvFileName := flag.String("csv", "problems.csv", "a csv file for problems which is in format question,answer")
-	timeOut := flag.Duration("limit", 30, "a time limit for user to answer the questions ")
+	timeLimit := flag.Int("limit", 30, "a time limit for quiz to answer the questions")
 	flag.Parse()
 
 	fileContent, err := os.Open(*csvFileName)
@@ -54,30 +53,29 @@ func main() {
 	}
 	points := 0
 	totalNumberOfQuestions := len(lines)
-	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Welcome to quiz game!!! Please enter you name: ")
-	userName, _ := reader.ReadString('\n')
-	fmt.Println("Hello ", userName, "There are ", totalNumberOfQuestions, "\nGame starts now !!")
-
-	maxTimeOut := *timeOut
-	expire := time.After(maxTimeOut * time.Second)
-	go func() {
+	var userName string
+	fmt.Scanf("%s\n", &userName)
+	fmt.Println("Hello ", strings.TrimSpace(userName), ", There are ", totalNumberOfQuestions, "\nGame starts now !!")
+	problems := parseLines(lines)
+	timer := time.NewTimer(time.Duration(*timeLimit) * time.Second)
+	for i, problem := range problems {
+		fmt.Printf("Problem #%d : %s =", i+1, problem.Question)
+		answerChan := make(chan string)
+		go func() {
+			var userResponse string
+			fmt.Scanf("%s\n", &userResponse)
+			answerChan <- userResponse
+		}()
 		select {
-		case <-expire:
+		case <-timer.C:
 			printResults(points, len(lines))
 			os.Exit(0)
-		}
-	}()
-
-	problems := parseLines(lines)
-	for i, problem := range problems {
-		fmt.Printf("Problem #%d : %s =\n", i+1, problem.Question)
-		var userResponse string
-		fmt.Scanf("%s\n", &userResponse)
-		if userResponse == problem.Answer {
-			points++
+		case userAnswer := <-answerChan:
+			if userAnswer == problem.Answer {
+				points++
+			}
 		}
 	}
 	printResults(points, len(problems))
-
 }
