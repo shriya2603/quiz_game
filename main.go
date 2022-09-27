@@ -39,7 +39,6 @@ func main() {
 	csvFileName := flag.String("csvFile", "problems.csv", "a csv file for problems which is in format question,answer")
 	timeOut := flag.Duration("limit", 30, "a time limit for user to answer the questions ")
 	flag.Parse()
-
 	csvData, err := ReadCsvFile(*csvFileName)
 	if err != nil {
 		panic(err)
@@ -54,13 +53,10 @@ func main() {
 	maxTimeOut := *timeOut
 	expire := time.After(maxTimeOut * time.Second)
 	go func() {
-		if v := <-expire; v != nil {
-			printResults(points)
-			os.Exit(0)
-		}
 		select {
 		case <-expire:
-
+			printResults(points)
+			os.Exit(0)
 		}
 	}()
 
