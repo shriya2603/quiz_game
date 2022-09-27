@@ -13,6 +13,16 @@ Few Assumptions:
 - "strings" : For removing spaces and new line from user response
 - "bufio" : For buffered I/O
 
+## Steps to run the quiz game 
+Step 1: To build the program 
+`go build`
+
+Step 2: To run the quiz game
+- default mode: run with csv file as problems.csv and timer as 30 seconds 
+<br>`./quiz`
+- change the quiz file or timer: this can be done with help of flags `-csv` and `-limit`
+<br>Example: `./quiz -csv=abc.csv -limit=10` 
+ Runs the program with abc.csv file and a timer of 10 seconds 
+
 ## References 
 - https://tutorialedge.net/golang/reading-console-input-golang/
-- 
